@@ -13,21 +13,24 @@ class BounceRay:
         self.ray : Ray = Ray(self.p1, self.p2)
         self.color = (255, 255, 255, 255)
         self.child = ChildBounceRay(self.color, iterations - 1)
+        self.angleOffset : float = 0
+        self.angleOffsetChange : float = 0.0001
 
     def update(self, 
                screen : pygame.Surface, 
                colliders : list[Ray], 
-               newP1 : Vector2|tuple = None,
-               newP2 : Vector2|tuple = None):
-        if newP1 != None:
-            self.p1 = newP1
-            self.ray.pos1 = self.p1
-        if newP2 != None:
-            self.p2 = newP2
-            self.ray.pos2 = self.p2
-        else:
-            self.p2 = Vector2(pygame.mouse.get_pos())
-            self.ray.pos2 = self.p2
+               keys : list):
+        if keys[pygame.K_LEFT]:
+            self.angleOffset -= self.angleOffsetChange
+        elif keys[pygame.K_RIGHT]:
+            self.angleOffset += self.angleOffsetChange
+
+        self.p2 = Vector2(pygame.mouse.get_pos())
+        self.ray.pos2 = self.p2
+        angle = self.ray.getAngle() + self.angleOffset
+        dist = self.ray.getRayLength()
+        self.p2 = Vector2(np.cos(np.radians(angle)) * dist, np.sin(np.radians(angle)) * dist)
+        self.ray.pos2 = self.p2
         
         closestCollision = None
         for ray in colliders:
