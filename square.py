@@ -23,7 +23,7 @@ class Square:
         self.points = [p1, p2, p3, p4]
         self.activeEdges = activeEdges
 
-        self.color = (0, 255, 0)
+        self.color = (0, 100, 0)
 
     def getColliders(self) -> list[Ray]:
         rays = []

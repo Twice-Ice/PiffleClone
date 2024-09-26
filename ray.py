@@ -85,13 +85,19 @@ class Ray:
         collisionData = self.lineCollision(ray)
         if len(collisionData) > 1:
             collided, t, s = collisionData
-            distance = self.getRayLength()
+            distance = self.getRayLength() - 1
             collisionDistance = distance * t
             angle = np.atan2(self.pos2.y - self.pos1.y, self.pos2.x - self.pos1.x)
             return self.pos1 + Vector2(np.cos(angle) * collisionDistance, np.sin(angle) * collisionDistance), collisionDistance
         
+    def getAngle(self) -> float:
+        return np.degrees(np.atan2(self.pos2.y - self.pos1.y, self.pos2.x - self.pos1.x))
+
     def getNormal(self) -> float:
-        return np.angle(np.atan2(self.pos2.y - self.pos1.y, self.pos2.x - self.pos1.x)) + 90
+        return self.getAngle() + 90
+    
+    def getMidPoint(self) -> Vector2:
+        return self.pos1 + (self.pos2 - self.pos1) * .5
 
     def draw(self, screen : pygame.display, color : tuple = (255, 255, 255), size : int = 1, points : bool = False) -> None:
         pygame.draw.line(screen, color, self.pos1, self.pos2, size)

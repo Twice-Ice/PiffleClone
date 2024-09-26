@@ -12,7 +12,9 @@ arena : Arena = None
 
 def startGame():
     global arena
-    arena = Arena(250)
+    arena = Arena(750)
+
+lineScreen = pygame.Surface((gb.SX, gb.SY), pygame.SRCALPHA)
 
 startGame()
 while not doExit:
@@ -26,7 +28,10 @@ while not doExit:
     if keys[pygame.K_r]:
         startGame()
 
-    arena.update(screen)
+    lineScreen.fill((0, 0, 0, 0))
+    arena.update(lineScreen)
+
+    screen.blit(lineScreen, (0, 0))
 
     pygame.display.flip()
 pygame.quit()

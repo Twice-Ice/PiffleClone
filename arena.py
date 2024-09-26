@@ -15,7 +15,8 @@ class Arena:
             Square((0, 0), (p1.x, gb.SY), activeEdges=[False, False, True, False]),
             Square((p1.x, 0), (p4.x, p1.y), activeEdges=[False, True, False, False]),
             Square((p4.x, 0), (gb.SX, gb.SY), activeEdges=[True, False, False, False]),
-            Square((p1.x, p4.y), (p4.x, gb.SY), activeEdges=[False, False, False, True])
+            Square((p1.x, p4.y), (p4.x, gb.SY), activeEdges=[False, False, False, True]),
+            Square(Vector2(gb.SX//2, gb.SY//2) - Vector2(25, 25), Vector2(gb.SX//2, gb.SY//2) + Vector2(25, boxScale/2 - 20))
         ]
 
         self.bounceRay = BounceRay(Vector2(gb.SX/2, p4.y - (boxScale/100)))
