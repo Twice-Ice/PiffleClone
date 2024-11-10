@@ -2,6 +2,7 @@ import pygame
 from pygame import Vector2
 from ray import Ray
 import numpy as np
+import globals as gb
 
 def angleto360(angle):
     return (angle + 3600) % 360
@@ -14,7 +15,7 @@ class BounceRay:
         self.color = (255, 255, 255, 255)
         self.child = ChildBounceRay(self.color, iterations - 1)
         self.angleOffset : float = 0
-        self.angleOffsetChange : float = 0.0001
+        self.angleOffsetChange : float = 0.001
 
     def update(self, 
                screen : pygame.Surface, 
@@ -34,7 +35,7 @@ class BounceRay:
         
         closestCollision = None
         for ray in colliders:
-            data = self.ray.lineCollisionPoint(ray)
+            data = self.ray.lineCollisionPoint(ray, True)
 
             #draws Normals
             drawNormals = False
@@ -88,22 +89,16 @@ class ChildBounceRay:
         self.p2 = self.p1 + Vector2(np.cos(np.radians(angle)) * self.dist, np.sin(np.radians(angle)) * self.dist)
         self.ray.pos2 = self.p2
         
-        collisionPoints = []
         closestCollision = None
         for ray in colliders:
-            data = self.ray.lineCollisionPoint(ray)
+            data = self.ray.lineCollisionPoint(ray, True)
             if data != None:
                 data += ray.getNormal(),
-                collisionPoints.append(data)
                 if data[1] != 0 and closestCollision == None:
                     closestCollision = data
                 elif data[1] != 0 and data[1] < closestCollision[1]:
                     closestCollision = data
 
-        if closestCollision != None:
-            if self.p1 == closestCollision[0]:
-                pass
-        
         if closestCollision != None:
             pygame.draw.line(screen, (255, 255, 255), self.p1, closestCollision[0], 1)
             # pygame.draw.circle(screen, (255, 0, 255), closestCollision[0], 3)
@@ -114,4 +109,16 @@ class ChildBounceRay:
                 angle = normal - relAngle + 180
                 self.child.update(screen, colliders, closestCollision[0], angle)
         else:
-            pygame.draw.line(screen, (255, 255, 255), self.p1, Vector2(np.cos(np.radians(angle)) * self.dist, np.sin(np.radians(angle)) * self.dist))
+            pygame.draw.line(screen, (255, 0, 0), self.p1, Vector2(np.cos(np.radians(angle)) * self.dist, np.sin(np.radians(angle)) * self.dist), 2)
+            
+            print(self.iterations)
+
+            closestCollision = None
+            for ray in colliders:
+                data = self.ray.lineCollisionPoint(ray, True)
+                if data != None:
+                    data += ray.getNormal(),
+                    if data[1] != 0 and closestCollision == None:
+                        closestCollision = data
+                    elif data[1] != 0 and data[1] < closestCollision[1]:
+                        closestCollision = data

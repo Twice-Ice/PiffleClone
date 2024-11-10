@@ -26,8 +26,10 @@ class Arena:
 
         self.grabbedPoints = []
 
+        self.cooldown = 0
 
-    def update(self, screen : pygame.Surface):
+
+    def update(self, screen : pygame.Surface, delta : float = .017):
         colliders : list[Ray] = []
         for square in self.sides:
             colliders += square.getColliders()
@@ -43,5 +45,9 @@ class Arena:
         for bezier in self.beziers:
             bezier.update(screen, 1, Vector2(0, 0), self.grabbedPoints, 0, "lines")
 
-        if keys[pygame.K_c]:
-            self.beziers.append(BezierCurve(pygame.mouse.get_pos(), 5, drawMode="lines"))
+        self.cooldown += delta
+
+        if self.cooldown >= .3:
+            if keys[pygame.K_c]:
+                self.beziers.append(BezierCurve(pygame.mouse.get_pos(), 5, drawMode="lines"))
+                self.cooldown = 0

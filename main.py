@@ -29,7 +29,7 @@ while not doExit:
         startGame()
 
     lineScreen.fill((0, 0, 0, 0))
-    arena.update(lineScreen)
+    arena.update(lineScreen, delta)
 
     screen.blit(lineScreen, (0, 0))
 

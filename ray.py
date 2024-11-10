@@ -1,6 +1,7 @@
 import pygame, time, random, os
 from pygame import Vector2
 import numpy as np
+import globals as gb
 
 class Ray:
     def __init__(self, 
@@ -20,14 +21,14 @@ class Ray:
         """
         returns the collision bool, t, and s
         """
-        x1 = self.pos1.x
-        y1 = self.pos1.y
-        x2 = self.pos2.x
-        y2 = self.pos2.y
-        x3 = ray.pos1.x
-        y3 = ray.pos1.y
-        x4 = ray.pos2.x
-        y4 = ray.pos2.y
+        x1 = gb.halfRound(self.pos1.x, 1)
+        y1 = gb.halfRound(self.pos1.y, 1)
+        x2 = gb.halfRound(self.pos2.x, 1)
+        y2 = gb.halfRound(self.pos2.y, 1)
+        x3 = gb.halfRound(ray.pos1.x, 1)
+        y3 = gb.halfRound(ray.pos1.y, 1)
+        x4 = gb.halfRound(ray.pos2.x, 1)
+        y4 = gb.halfRound(ray.pos2.y, 1)
 
         determinant = (x2 - x1) * (y4 - y3) - (y2 - y1) * (x4 - x3)
 
@@ -80,15 +81,21 @@ class Ray:
     def getRayLength(self) -> float:
         return self.pos1.distance_to(self.pos2)
     
-    def lineCollisionPoint(self, ray) -> tuple[Vector2, float]|None:
+    def lineCollisionPoint(self, ray, selfAligned : bool = True) -> tuple[Vector2, float]|None:
         """if collided, returns the position of collision and the distance for the collision"""
         collisionData = self.lineCollision(ray)
-        if len(collisionData) > 1:
+        if collisionData[0] == True:
             collided, t, s = collisionData
-            distance = self.getRayLength() - 1
-            collisionDistance = distance * t
-            angle = np.atan2(self.pos2.y - self.pos1.y, self.pos2.x - self.pos1.x)
-            return self.pos1 + Vector2(np.cos(angle) * collisionDistance, np.sin(angle) * collisionDistance), collisionDistance
+            if selfAligned:
+                distance = self.getRayLength() - 1
+                collisionDistance = distance * t
+                angle = np.atan2(self.pos2.y - self.pos1.y, self.pos2.x - self.pos1.x)
+                return self.pos1 + Vector2(np.cos(angle) * collisionDistance, np.sin(angle) * collisionDistance), collisionDistance
+            else:
+                distance = ray.getRayLength() - 1
+                collisionDistance = distance * s
+                angle = np.atan2(ray.pos2.y - ray.pos1.y, self.pos2.x - self.pos1.x)
+                return ray.pos1 + Vector2(np.cos(angle) * collisionDistance, np.sin(angle) * collisionDistance), collisionDistance
         
     def getAngle(self) -> float:
         return np.degrees(np.atan2(self.pos2.y - self.pos1.y, self.pos2.x - self.pos1.x))
